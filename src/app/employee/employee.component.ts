@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-employee',
@@ -11,7 +10,7 @@ export class EmployeeComponent implements OnInit {
   isAscending = false;
   departmentSummaryList: any[] = [];
 
-  constructor(private datePipe: DatePipe) {
+  constructor() {
     this.candidateList = [
       { id: 11, name: 'Ash', department: 'Finance', joining_date: '8/10/2016' },
       { id: 12, name: 'John', department: 'HR', joining_date: '18/1/2011' },
