@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-employee',
@@ -8,8 +9,9 @@ import { Component, OnInit } from '@angular/core';
 export class EmployeeComponent implements OnInit {
   candidateList: any[] = [];
   isAscending = false;
+  departmentSummaryList: any[] = [];
 
-  constructor() {
+  constructor(private datePipe: DatePipe) {
     this.candidateList = [
       { id: 11, name: 'Ash', department: 'Finance', joining_date: '8/10/2016' },
       { id: 12, name: 'John', department: 'HR', joining_date: '18/1/2011' },
@@ -54,24 +56,16 @@ export class EmployeeComponent implements OnInit {
     ];
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getDepartmentsSummary();
+  }
 
   sortCandiates(key: string) {
     this.isAscending = !this.isAscending;
     this.candidateList = this.candidateList.sort((a, b) => {
       if (key === 'joining_date') {
-        const firstDate = a[key].split('/');
-        const secondDate = b[key].split('/');
-        const newFirstDate = new Date(
-          Number(firstDate[2]),
-          Number(firstDate[1]),
-          Number(firstDate[0])
-        );
-        const newSecondDate = new Date(
-          Number(secondDate[2]),
-          Number(secondDate[1]),
-          Number(secondDate[0])
-        );
+        const newFirstDate = this.covertIntoDateFormat(a[key]);
+        const newSecondDate = this.covertIntoDateFormat(b[key]);
         return newFirstDate.getTime() > newSecondDate.getTime()
           ? this.isAscending
             ? 1
@@ -92,5 +86,48 @@ export class EmployeeComponent implements OnInit {
           : 1
         : 0;
     });
+  }
+
+  getDepartmentsSummary() {
+    this.departmentSummaryList = [];
+    for (let index = 0; index < this.candidateList.length; index++) {
+      const deptIndex = this.departmentSummaryList.findIndex(
+        (dept) => dept.name === this.candidateList[index].department
+      );
+      if (deptIndex > -1) {
+        this.departmentSummaryList[deptIndex].count =
+          this.departmentSummaryList[deptIndex].count + 1;
+      } else {
+        this.departmentSummaryList.push({
+          name: this.candidateList[index].department,
+          count: 1,
+        });
+      }
+    }
+  }
+
+  expGrterClickHandle() {
+    const seniorCandidateList = [];
+    const currentDate: any = new Date();
+    this.candidateList.forEach((element: any) => {
+      const ele_date: any = this.covertIntoDateFormat(element.joining_date);
+      const d_Days = Math.ceil(
+        Math.abs(currentDate - ele_date) / (1000 * 60 * 60 * 24)
+      );
+      if (d_Days > 730) {
+        seniorCandidateList.push(element);
+      }
+    });
+    this.candidateList = seniorCandidateList;
+  }
+  removeDevCandidatesClickHandle() {
+    this.candidateList = this.candidateList.filter(
+      (candidate) => candidate.department.toLowerCase() != 'development'
+    );
+  }
+
+  covertIntoDateFormat(value: string) {
+    const dates = value.split('/');
+    return new Date(dates[1] + '/' + dates[0] + '/' + dates[2]);
   }
 }
