@@ -9,6 +9,8 @@ export class EmployeeComponent implements OnInit {
   candidateList: any[] = [];
   isAscending = false;
   departmentSummaryList: any[] = [];
+  seniorCandidateList: any[] = [];
+  searchValue: string = '';
 
   constructor() {
     this.candidateList = [
@@ -55,10 +57,14 @@ export class EmployeeComponent implements OnInit {
     ];
   }
 
-  ngOnInit(): void {
-    this.getDepartmentsSummary();
-  }
+  ngOnInit(): void {}
 
+  /**
+   * sort candidate by name and joining date
+   *
+   * @param {string} key
+   * @memberof EmployeeComponent
+   */
   sortCandiates(key: string) {
     this.isAscending = !this.isAscending;
     this.candidateList = this.candidateList.sort((a, b) => {
@@ -87,8 +93,13 @@ export class EmployeeComponent implements OnInit {
     });
   }
 
-  getDepartmentsSummary() {
-    this.departmentSummaryList = [];
+  /**
+   * find the department count
+   *
+   * @memberof EmployeeComponent
+   */
+  getDepartmentCountClickHandle() {
+    this.resetData();
     for (let index = 0; index < this.candidateList.length; index++) {
       const deptIndex = this.departmentSummaryList.findIndex(
         (dept) => dept.name === this.candidateList[index].department
@@ -105,8 +116,13 @@ export class EmployeeComponent implements OnInit {
     }
   }
 
+  /**
+   * find the empolyee wxperience greater than 2 years.
+   *
+   * @memberof EmployeeComponent
+   */
   expGrterClickHandle() {
-    const seniorCandidateList = [];
+    this.resetData();
     const currentDate: any = new Date();
     this.candidateList.forEach((element: any) => {
       const ele_date: any = this.covertIntoDateFormat(element.joining_date);
@@ -114,19 +130,40 @@ export class EmployeeComponent implements OnInit {
         Math.abs(currentDate - ele_date) / (1000 * 60 * 60 * 24)
       );
       if (d_Days > 730) {
-        seniorCandidateList.push(element);
+        this.seniorCandidateList.push(element);
       }
     });
-    this.candidateList = seniorCandidateList;
   }
+  /**
+   * remove development candidate function
+   *
+   * @memberof EmployeeComponent
+   */
   removeDevCandidatesClickHandle() {
     this.candidateList = this.candidateList.filter(
       (candidate) => candidate.department.toLowerCase() != 'development'
     );
   }
 
+  /**
+   *convert string into date
+   *
+   * @param {string} value
+   * @returns
+   * @memberof EmployeeComponent
+   */
   covertIntoDateFormat(value: string) {
     const dates = value.split('/');
     return new Date(dates[1] + '/' + dates[0] + '/' + dates[2]);
+  }
+
+  /**
+   * reset Data
+   *
+   * @memberof EmployeeComponent
+   */
+  resetData() {
+    this.seniorCandidateList = [];
+    this.departmentSummaryList = [];
   }
 }

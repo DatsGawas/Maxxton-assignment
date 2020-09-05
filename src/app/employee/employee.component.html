@@ -4,6 +4,13 @@
     <div class="card-body">
       <div class="row">
         <div class="col-sm-7">
+          <div class="flex-container">
+            <input
+              [(ngModel)]="searchValue"
+              class="form-control"
+              placeholder="Search By Name"
+            />
+          </div>
           <table class="table table-sm table-bordered">
             <thead>
               <tr>
@@ -27,7 +34,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let candidate of candidateList">
+              <tr
+                *ngFor="
+                  let candidate of candidateList | search: searchValue:'name'
+                "
+              >
                 <td>{{ candidate.name }}</td>
                 <td>{{ candidate.department }}</td>
                 <td>{{ candidate.joining_date }}</td>
@@ -35,7 +46,34 @@
             </tbody>
           </table>
 
-          <table class="table table-sm table-bordered mt-50">
+          <button
+            type="button"
+            class="btn btn-primary btn-margin"
+            (click)="removeDevCandidatesClickHandle()"
+          >
+            Remove development candidates
+          </button>
+        </div>
+        <div class="col-sm-5">
+          <button
+            type="button"
+            class="btn btn-primary btn-margin"
+            (click)="expGrterClickHandle()"
+          >
+            Experience > 2 years
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-margin"
+            (click)="getDepartmentCountClickHandle()"
+          >
+            Get Department Count
+          </button>
+
+          <table
+            *ngIf="departmentSummaryList.length > 0"
+            class="table table-sm table-bordered mt-50"
+          >
             <thead>
               <tr>
                 <th scope="col">Department</th>
@@ -49,22 +87,26 @@
               </tr>
             </tbody>
           </table>
-        </div>
-        <div class="col-sm-5">
-          <button
-            type="button"
-            class="btn btn-primary btn-margin"
-            (click)="expGrterClickHandle()"
+
+          <table
+            *ngIf="seniorCandidateList.length > 0"
+            class="table table-sm table-bordered"
           >
-            Experience > 2 years
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary btn-margin"
-            (click)="removeDevCandidatesClickHandle()"
-          >
-            Remove development candidates
-          </button>
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Department</th>
+                <th scope="col">Joining Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let candidate of seniorCandidateList">
+                <td>{{ candidate.name }}</td>
+                <td>{{ candidate.department }}</td>
+                <td>{{ candidate.joining_date }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
